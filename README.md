@@ -1,2 +1,12 @@
-The database and queries.py have been created and tested as described in the specifications and queries repository.
-I don't think it's important, but the database name is "comp3005_project_final".
+## Introduction
+This project can be used to load the json data found in a soccer competition in [StatsBomb Open Data](https://github.com/statsbomb/open-data/tree/0067cae166a56aa80b2ef18f61e16158d6a7359a) to a PotgreSQL database.  To see the SQL code used to create the database refer to the [database SQL](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/db_sqls/database_v3.sql). To see the tables in the database, refer to the [database schema](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/docs/report/schema_diagram/comp3005_project_database_schema.svg). The database schema has been created to optimize the quesries requested in the [project specifications](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/docs/Project_COMP_3005_W24_V1.pdf). For more information on the design decisions, refer to the [project report](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/docs/report/comp3005_project_v1_group16.pdf).
+
+### json_loader
+json_loader package uses Psycopg 3 to connect to a PostgreSQL database. Each module in the database is responsible for loading a specific json file in the source database; match_loader extracts matches data, event_loader extracts events data, and so on.
+
+## How to use
+To load a competition data into the database, go to main.py and add a load_competition(). For example, to add the data from 2020/2021 season of La Liga use `load_competition('la liga', '2020/2021')`. 
+### Sample Queries
+[dbexport.sql](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/dbexport.sql) is the database created from the data of seasons 2018/2019, 2019/2020, and 2020/2021 of La Liga and season 2003/2004 of Premier League.
+
+Since this code is the solution to a term project, the SQL queries created for the problems in the [project specifications](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/docs/Project_COMP_3005_W24_V1.pdf) can be found in the [SQL queries](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/db_sqls/queries_v3.sql). The ["queries_results"](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/tree/main/queries_results) folder holds the results of the SQL queries in the csv format. It also contains a script ([queries.py](https://github.com/ca-sajad/StatsBomb_PostgreSQL_database/blob/main/queries_results/queries.py)) used to run the SQL queries and time each query.
