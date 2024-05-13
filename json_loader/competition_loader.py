@@ -1,7 +1,13 @@
-from sql_utils import insert_record
+"""Loads competition data found in open-data/data/competitions.json into the database"""
+from .sql_utils import insert_record
 
 
 def insert_country(record):
+    """Inserts into 'countries' table of db
+
+    :param record: an entry in a json file in competitions.json
+    :return: None
+    """
     if 'country_id' in record:
         insert_record('countries', {'country_id': record['country_id'],
                                     'country_name': record['country_name']
@@ -12,6 +18,11 @@ def insert_country(record):
 
 
 def insert_competition(record):
+    """Inserts into 'competitions_seasons' table of db
+
+    :param record: an entry in a json file in competitions.json
+    :return: None
+    """
     competition_youth = record['competition_youth'] == 'true'
     competition_international = record['competition_international'] == 'true'
 

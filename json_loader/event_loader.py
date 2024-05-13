@@ -1,8 +1,16 @@
-from lineup_loader import insert_player_position
-from sql_utils import insert_record, update_record, get_field
+"""Loads data from a json file in open-data/data/events folder into the database"""
+from .lineup_loader import insert_player_position
+from .sql_utils import insert_record, get_field
 
 
 def insert_event(competition_id, match_id, record):
+    """Inserts an event's data into 'events' and other event-related tables of db
+
+    :param competition_id: an integer representing the id of the competition the team has participated in
+    :param match_id: an integer representing the id of a match the team is part of
+    :param record: an event (an entry of a json file in the 'events' folder)
+    :return: None
+    """
     event_type_id = record['type']['id']
 
     # don't add these types: Starting XI, Half Start, Half End, Tactical Shift, Referee Ball-Drop, Own Goal For
@@ -111,12 +119,23 @@ def insert_event(competition_id, match_id, record):
 
 
 def insert_play_pattern(play_pattern):
+    """Inserts into 'play_patterns' table of db
+
+    :param play_pattern: "play_pattern" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('play_patterns', {'play_pattern_id': play_pattern['id'],
                                     'play_pattern_name': play_pattern['name']
                                     })
 
 
 def insert_related_events(related_events, event_db_id):
+    """Inserts into 'related_events' table of db
+
+    :param related_events: "related_events" element of an entry in a json file in the 'events' folder
+    :param event_db_id: "id" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     for related_event in related_events:
         insert_record('related_events', {'event_db_id': event_db_id,
                                          'related_event_db_id': related_event
@@ -124,12 +143,23 @@ def insert_related_events(related_events, event_db_id):
 
 
 def insert_event_outcome(outcome):
+    """Inserts into 'event_outcomes' table of db
+
+    :param outcome: "outcome" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('event_outcomes', {'event_outcome_id': outcome['id'],
                                      'event_outcome_name': outcome['name']
                                      })
 
 
 def insert_ball_receipt(record, event_id):
+    """Inserts into 'ball_receipts' table of db
+
+    :param record: a "Ball Receipt" event (an entry of a json file in the 'events' folder which is of type "Ball Receipt")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no ball_receipt field, there's nothing to add to the ball_receipts table
     br = record.get('ball_receipt')
     if br is None:
@@ -146,6 +176,12 @@ def insert_ball_receipt(record, event_id):
 
 
 def insert_ball_carry(record, event_id):
+    """Inserts into 'ball_carries' table of db
+
+    :param record: a "Carry" event (an entry of a json file in the 'events' folder which is of type "Carry")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no carry field, there's nothing to add to the ball_carries table
     carry = record.get('carry')
     if carry is None:
@@ -161,30 +197,57 @@ def insert_ball_carry(record, event_id):
 
 
 def insert_pass_height(height):
+    """Inserts into 'pass_heights' table of db
+
+    :param height: "height" element of "pass" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('pass_heights', {'pass_height_id': height['id'],
                                    'pass_height_name': height['name']
                                    })
 
 
 def insert_body_part(body_part):
+    """Inserts into 'body_parts' table of db
+
+    :param body_part: "body_part" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('body_parts', {'body_part_id': body_part['id'],
                                  'body_part_name': body_part['name']
                                  })
 
 
 def insert_pass_type(pass_type):
+    """Inserts into 'pass_types' table of db
+
+    :param pass_type: "type" element of "pass" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('pass_types', {'pass_type_id': pass_type['id'],
                                  'pass_type_name': pass_type['name']
                                  })
 
 
 def insert_shot_technique(technique):
+    """Inserts into 'shot_techniques' table of db
+
+    :param technique: "technique" element of "shot" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('shot_techniques', {'shot_technique_id': technique['id'],
                                       'shot_technique_name': technique['name']
                                       })
 
 
 def insert_pass(competition_id, match_id, record):
+    """Inserts an event's data into 'events_passes' and other pass_event-related tables of db
+
+    :param competition_id: an integer representing the id of the competition the team has participated in
+    :param match_id: an integer representing the id of a match the team is part of
+    :param record: a "Pass" event (an entry of a json file in the 'events' folder which is of type "Pass")
+    :return: None
+    """
     event_db_id = record['id']
     related_events = record.get('related_events', [])
     insert_related_events(related_events, event_db_id)
@@ -287,6 +350,12 @@ def insert_pass(competition_id, match_id, record):
 
 
 def insert_ball_recovery(record, event_id):
+    """Inserts into 'ball_recoveries' table of db
+
+    :param record: a "Recovery" event (an entry of a json file in the 'events' folder which is of type "Recovery")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no ball_recovery field, there's nothing to add to the ball_recoveries table
     br = record.get('ball_recovery')
     if br is None:
@@ -302,6 +371,12 @@ def insert_ball_recovery(record, event_id):
 
 
 def insert_duel(record, event_id):
+    """Inserts into 'duels' table of db
+
+    :param record: a "Duel" event (an entry of a json file in the 'events' folder which is of type "Duel")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no duel field, there's nothing to add to the duels table
     duel = record.get('duel')
     if duel is None:
@@ -324,6 +399,12 @@ def insert_duel(record, event_id):
 
 
 def insert_block(record, event_id):
+    """Inserts into 'blocks' table of db
+
+    :param record: a "Block" event (an entry of a json file in the 'events' folder which is of type "Block")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no block field, there's nothing to add to the blocks table
     block = record.get('block')
     if block is None:
@@ -341,6 +422,12 @@ def insert_block(record, event_id):
 
 
 def insert_clearance(record, event_id):
+    """Inserts into 'clearances' table of db
+
+    :param record: a "Clearance" event (an entry of a json file in the 'events' folder which is of type "Clearance")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no clearance field, there's nothing to add to the clearances table
     clearance = record.get('clearance')
     if clearance is None:
@@ -360,6 +447,12 @@ def insert_clearance(record, event_id):
 
 
 def insert_interception(record, event_id):
+    """Inserts into 'interceptions' table of db
+
+    :param record: an "Interception" event (an entry of a json file in the 'events' folder which is of type "Interception")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no interception field, there's nothing to add to the interceptions table
     interception = record.get('interception')
     if interception is None:
@@ -376,6 +469,12 @@ def insert_interception(record, event_id):
 
 
 def insert_dribble(record, event_id):
+    """Inserts into 'dribbles' table of db
+
+    :param record: a "Dribble" event (an entry of a json file in the 'events' folder which is of type "Dribble")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no dribble field, there's nothing to add to the dribbles table
     dribble = record.get('dribble')
     if dribble is None:
@@ -399,6 +498,13 @@ def insert_dribble(record, event_id):
 
 
 def insert_shot(competition_id, match_id, record):
+    """Inserts an event's data into 'events_shots' and other shot_event-related tables of db
+
+    :param competition_id: an integer representing the id of the competition the team has participated in
+    :param match_id: an integer representing the id of a match the team is part of
+    :param record: a "Shot" event (an entry of a json file in the 'events' folder which is of type "Shot")
+    :return: None
+    """
     event_db_id = record['id']
     related_events = record.get('related_events', [])
     insert_related_events(related_events, event_db_id)
@@ -487,6 +593,12 @@ def insert_shot(competition_id, match_id, record):
 
 
 def insert_substitution(record, event_id):
+    """Inserts into 'substitutions' table of db
+
+    :param record: a "Substitution" event (an entry of a json file in the 'events' folder which is of type "Substitution")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no substitution field, there's nothing to add to the substitutions table
     sub = record.get('substitution')
     if sub is None:
@@ -507,6 +619,12 @@ def insert_substitution(record, event_id):
 
 
 def insert_foul_won(record, event_id):
+    """Inserts into 'foul_wons' table of db
+
+    :param record: a "Foul Won" event (an entry of a json file in the 'events' folder which is of type "Foul Won")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no foul_won field, there's nothing to add to the foul_wons table
     foul = record.get('foul_won')
     if foul is None:
@@ -524,12 +642,23 @@ def insert_foul_won(record, event_id):
 
 
 def insert_foul_type(foul):
+    """Inserts into 'foul_types' table of db
+
+    :param foul: "type" element of "foul_committed" element of an entry in a json file in the 'events' folder
+    :return: None
+    """
     insert_record('foul_types', {'foul_type_id': foul['id'],
                                  'foul_type_name': foul['name']
                                  })
 
 
 def insert_foul_commit(record, event_id):
+    """Inserts into 'foul_commits' table of db
+
+    :param record: a "Foul Committed" event (an entry of a json file in the 'events' folder which is of type "Foul Committed")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no foul_committed field, there's nothing to add to the foul_commits table
     foul = record.get('foul_committed')
     if foul is None:
@@ -556,6 +685,12 @@ def insert_foul_commit(record, event_id):
 
 
 def insert_goalie_actions(record, event_id):
+    """Inserts into 'goalkeeper_actions' table of db
+
+    :param record: a "Goal Keeper" event (an entry of a json file in the 'events' folder which is of type "Goal Keeper")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no goalkeeper field, there's nothing to add to the goalkeeper_actions table
     goalie = record.get('goalkeeper')
     if goalie is None:
@@ -586,6 +721,12 @@ def insert_goalie_actions(record, event_id):
 
 
 def insert_bad_behaviour(record, event_id):
+    """Inserts into 'bad_behaviours' table of db
+
+    :param record: a "Bad Behaviour" event (an entry of a json file in the 'events' folder which is of type "Bad Behaviour")
+    :param event_id: primary key of the corresponding field in 'events' table
+    :return: None
+    """
     # if there's no bad_behaviour field, there's nothing to add to the bad_behaviours table
     bb = record.get('bad_behaviour')
     if bb is None:

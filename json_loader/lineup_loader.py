@@ -1,8 +1,16 @@
-from competition_loader import insert_country
-from sql_utils import insert_record, get_field
+"""Loads data from a json file in open-data/data/lineups folder into the database"""
+from .competition_loader import insert_country
+from .sql_utils import insert_record, get_field
 
 
 def insert_lineup(competition_id, match_id, record):
+    """Uses helper functions to add a team's players data to db
+
+    :param competition_id: an integer representing the id of the competition the team has participated in
+    :param match_id: an integer representing the id of a match the team is part of
+    :param record: an entry in a json file in the 'lineups' folder
+    :return: None
+    """
     team_id = get_field('teams', 'team_id', {'team_orig_id': record['team_id'],
                                              'competition_id': competition_id
                                              })
@@ -16,6 +24,14 @@ def insert_lineup(competition_id, match_id, record):
 
 
 def insert_player_lineup(competition_id, team_id, match_id, player):
+    """Inserts into 'players', 'player_jerseys', and 'lineups' tables of db
+
+    :param competition_id: an integer representing the id of the competition the team has participated in
+    :param team_id: an integer representing the id of a "home_team" or "away_team"
+    :param match_id: an integer representing the id of a match the team is part of
+    :param player: an element in the "lineup" array of an entry in a json file in the 'lineups' folder
+    :return: None
+    """
     country_id = player['country']['id']
     if get_field('countries', 'country_name', {'country_id': country_id}) is None:
         insert_country({'country_id': country_id,
@@ -37,13 +53,14 @@ def insert_player_lineup(competition_id, team_id, match_id, player):
                               })
 
 
-def insert_player_position(position):
-    insert_record('player_positions', {'player_position_id': position['position_id'],
-                                       'player_position_name': position['position']
-                                       })
-
-
 def insert_player_match_position(team_id, match_id, player):
+    """Inserts into 'player_match_positions' table of db
+
+    :param team_id: an integer representing the id of a "home_team" or "away_team"
+    :param match_id: an integer representing the id of a match the team is part of
+    :param player: an element in the "lineup" array of an entry in a json file in the 'lineups' folder
+    :return: None
+    """
     positions = player['positions']
     for position in positions:
 
@@ -71,7 +88,25 @@ def insert_player_match_position(team_id, match_id, player):
                                                  })
 
 
+def insert_player_position(position):
+    """Inserts into 'player_positions' table of db
+
+    :param position: an element in the "player_positions" array of an entry in a json file in the 'lineups' folder
+    :return: None
+    """
+    insert_record('player_positions', {'player_position_id': position['position_id'],
+                                       'player_position_name': position['position']
+                                       })
+
+
 def insert_player_match_card(team_id, match_id, player):
+    """Inserts into 'player_match_cards' table of db
+
+    :param team_id: an integer representing the id of a "home_team" or "away_team"
+    :param match_id: an integer representing the id of a match the team is part of
+    :param player: an element in the "lineup" array of an entry in a json file in the 'lineups' folder
+    :return: None
+    """
     cards = player['cards']
 
     for card in cards:

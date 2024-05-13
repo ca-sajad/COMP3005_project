@@ -1,4 +1,4 @@
-from database_loader import load_competition
+from json_loader.database_loader import load_competition
 
 load_competition('la liga', '2020/2021')
 load_competition('la liga', '2019/2020')

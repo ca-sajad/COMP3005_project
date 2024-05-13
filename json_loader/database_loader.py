@@ -1,14 +1,20 @@
-
+"""Loads all data (competition, matches, lineups, events) from open-data/data"""
 import os
 import json
-from constants import *
-from competition_loader import *
-from match_loader import *
-from lineup_loader import *
-from event_loader import *
+from .constants import *
+from .competition_loader import *
+from .match_loader import *
+from .lineup_loader import *
+from .event_loader import *
 
 
 def find_file(start_dir, target_file):
+    """Finds a file in a directory or its subdirectories based on its name
+
+    :param start_dir: the directory to start the search
+    :param target_file: string, the name of file to search for
+    :return: if found: path of the file, otherwise: None
+    """
     for root, dirs, files in os.walk(start_dir):
         if target_file in files:
             return os.path.join(root, target_file)
@@ -16,6 +22,12 @@ def find_file(start_dir, target_file):
 
 
 def load_competition(competition_name, season_name):
+    """Inserts into database from the data found in open-data/data
+
+    :param competition_name: a string with the full competition name e.g. 'la liga'
+    :param season_name: a string with the full season name e.g. '2020/2021'
+    :return: None
+    """
     competition_file_path = find_file(BASE_PATH, COMPETITION_FILE_NAME)
 
     with open(competition_file_path, 'r') as file:
